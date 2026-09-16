@@ -58,6 +58,23 @@ class Dataset:
     filepath: str
     records: list[Record]
 
+    def clean_data(self):
+            with open(self.filepath, "r", newline="") as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    # skip an entire row if it doesn't have any value
+                    if not any(value and value.strip() for value in row.values()):
+                        continue
+        
+                    age = determine_age(row.get("age"))
+                    person = Record(row.get("id"), row.get("name"), age, row.get("city"), row.get("score"))
+        
+                    # skip a row if even one field doesn't have value, except name
+                    if not person.is_valid():
+                        continue
+    
+                    yield person
+
 
 # function to apply age specific rules
 def determine_age(str_age):
@@ -89,27 +106,6 @@ def determine_age(str_age):
                         first_digit = map_tens.get(key)
                         return first_digit + second_digit
             return ""
-
-
-# function for data cleaning operations
-def clean_data(file):
-    cleaned_records = []
-    reader = csv.DictReader(file)
-    for row in reader:
-        # skip an entire row if it doesn't have any value
-        if not any(value and value.strip() for value in row.values()):
-            continue
-
-        age = determine_age(row.get("age"))
-        person = Record(row.get("id"), row.get("name"), age, row.get("city"), row.get("score"))
-
-        # skip a row if even one field doesn't have value, except name
-        if not person.is_valid():
-            continue
-
-        cleaned_records.append(person)
-
-    return cleaned_records
 
 
 # function to handle duplicate ids
