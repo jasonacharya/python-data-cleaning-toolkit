@@ -53,6 +53,7 @@ class Record:
                 return False
         return True
 
+
 @dataclass
 class Dataset:
     filepath: str
@@ -60,23 +61,23 @@ class Dataset:
 
     # generator function for data cleaning operations
     def clean_data(self):
-            with open(self.filepath, "r", newline="") as file:
-                reader = csv.DictReader(file)
-                for row in reader:
-                    # skip an entire row if it doesn't have any value
-                    if not any(value and value.strip() for value in row.values()):
-                        continue
-        
-                    age = determine_age(row.get("age"))
-                    person = Record(row.get("id"), row.get("name"), age, row.get("city"), row.get("score"))
-        
-                    # skip a row if even one field doesn't have value, except name
-                    if not person.is_valid():
-                        continue
+        with open(self.filepath, "r", newline="") as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                # skip an entire row if it doesn't have any value
+                if not any(value and value.strip() for value in row.values()):
+                    continue
     
-                    yield person
+                age = determine_age(row.get("age"))
+                person = Record(row.get("id"), row.get("name"), age, row.get("city"), row.get("score"))
+    
+                # skip a row if even one field doesn't have value, except name
+                if not person.is_valid():
+                    continue
 
-     # consumer function to handle duplicate ids
+                yield person
+
+    # consumer function to handle duplicate ids
     def handle_id(self):
         duplicate_id ={}
 
@@ -137,13 +138,14 @@ def determine_age(str_age):
 def main():
     file_path = "messy_people.csv"
     record_list = []
-    
+
     dataset = Dataset(file_path, record_list)
     dataset.handle_id()
     final_records = dataset.records
 
     for record in final_records:
         print(record)
+
     print("Final Count: ", len(final_records))
 
 if __name__ == '__main__':
