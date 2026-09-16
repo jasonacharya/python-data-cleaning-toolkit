@@ -53,6 +53,11 @@ class Record:
                 return False
         return True
 
+@dataclass
+class Dataset:
+    filepath: str
+    records: list[Record]
+
 
 # function to apply age specific rules
 def determine_age(str_age):
