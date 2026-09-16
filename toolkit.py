@@ -58,6 +58,7 @@ class Dataset:
     filepath: str
     records: list[Record]
 
+    # generator function for data cleaning operations
     def clean_data(self):
             with open(self.filepath, "r", newline="") as file:
                 reader = csv.DictReader(file)
@@ -74,6 +75,31 @@ class Dataset:
                         continue
     
                     yield person
+
+     # consumer function to handle duplicate ids
+    def handle_id(self):
+        duplicate_id ={}
+
+        for current_record in self.clean_data():
+            if current_record.id in duplicate_id:
+                duplicate_id[current_record.id].append(current_record)
+            else:
+                duplicate_id[current_record.id] = [current_record]
+
+        final_records = []
+        for key, value in duplicate_id.items():
+            num_of_val = len(value)
+
+            if num_of_val > 1:
+                first_record = value[0]
+
+                if all(record == first_record for record in value):
+                    final_records.append(first_record)
+                # otherwise conflicting ID -> append nothing
+            else: 
+                final_records.append(value[0])
+        self.records = final_records
+        return self.records
 
 
 # function to apply age specific rules
@@ -108,37 +134,17 @@ def determine_age(str_age):
             return ""
 
 
-# function to handle duplicate ids
-def handle_id(records):
-    duplicate_id ={}
-    for current_record in records:
-        duplicate_id.update(
-            {current_record.id: [other_record for other_record in records if other_record.id == current_record.id]})
-
-    final_records = []
-    for key, value in duplicate_id.items():
-        num_of_val = len(value)
-
-        if num_of_val > 1:
-            first_record = value[0]
-
-            if all(record == first_record for record in value):
-                final_records.append(first_record)
-            # otherwise conflicting ID -> append nothing
-        else: 
-            final_records.append(value[0])
-
-    return final_records
-
-
 def main():
     file_path = "messy_people.csv"
-    with open(file_path, "r", newline="") as file:
-        cleaned_records = clean_data(file)
-        final_records = handle_id(cleaned_records)
-        for record in final_records:
-            print(record)
-        print("Final Count: ", len(final_records))
+    record_list = []
+    
+    dataset = Dataset(file_path, record_list)
+    dataset.handle_id()
+    final_records = dataset.records
+
+    for record in final_records:
+        print(record)
+    print("Final Count: ", len(final_records))
 
 if __name__ == '__main__':
     main() 
