@@ -1,5 +1,6 @@
 import csv
 from dataclasses import dataclass
+from collections.abc import Iterator 
 
 
 map_singles = {
@@ -46,7 +47,7 @@ class Record:
     score: str
 
     # check if a row has all values with an exception of name
-    def is_valid(self):
+    def is_valid(self: Record) -> bool:
         fields = [self.id, self.age, self.city, self.score]
         for field in fields:
             if field == "" or field is None:
@@ -60,7 +61,7 @@ class Dataset:
     records: list[Record]
 
     # generator function for data cleaning operations
-    def clean_data(self):
+    def clean_data(self: Dataset) -> Iterator[Record]:
         with open(self.filepath, "r", newline="") as file:
             reader = csv.DictReader(file)
             for row in reader:
@@ -78,7 +79,7 @@ class Dataset:
                 yield person
 
     # consumer function to handle duplicate ids
-    def handle_id(self):
+    def handle_id(self: Dataset) -> list[Record]:
         duplicate_id ={}
 
         for current_record in self.clean_data():
@@ -104,7 +105,7 @@ class Dataset:
 
 
 # function to apply age specific rules
-def determine_age(str_age):
+def determine_age(str_age: str) -> int | str:
     try:
         age = int(str_age)
         if age < 1 or age > 100:
@@ -135,7 +136,7 @@ def determine_age(str_age):
             return ""
 
 
-def main():
+def main() -> None:
     file_path = "messy_people.csv"
     record_list = []
 
