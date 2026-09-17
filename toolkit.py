@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from collections.abc import Iterator
 
 
-
 map_singles = {
     "one": 1,
     "two": 2,
@@ -70,7 +69,7 @@ def log_time(func):
 
         elapsed_time = end_time - start_time
 
-        print(f"Elapsed time is: {elapsed_time} seconds")
+        print(f"Elapsed time for function({func.__name__}): {elapsed_time} seconds")
         return result
     
     return wrapper
@@ -225,23 +224,22 @@ def main() -> None:
     dataset.handle_id()
     final_records = dataset.records
 
+    print("\n========== Elapsed time summary for each function ==========")
+    print("------------------------------------------------------------")
     average = dataset.average_score()
     oldest = dataset.oldest_person()
     youngest = dataset.youngest_person()
     p_per_city = dataset.people_per_city()
+
+    print("\n=========== Actual data outcome from the dataset ===========")
+    print("------------------------------------------------------------")
     print(f"Average Score: {average:.5f}")
-    print(f"Oldest age: {oldest}")
-    print(f"Youngest age: {youngest}")
-    print(f"People per city: {p_per_city}")
-    print(dataset.average_score.__name__)
-    print(dataset.oldest_person.__name__)
-    print(dataset.youngest_person.__name__)
-    print(dataset.people_per_city.__name__)
+    print(f"Oldest Person: {oldest}")
+    print(f"Youngest Person: {youngest}")
+    print(f"People per City: {p_per_city}")
 
-    # for record in final_records:
-    #     print(record)
-
-    print("Final Count: ", len(final_records))
+    print("\n============================================================")
+    print("Final number of cleaned rows: ", len(final_records))
 
 if __name__ == '__main__':
     main() 
