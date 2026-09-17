@@ -129,6 +129,29 @@ class Dataset:
         average = total_score/count
         return average
 
+
+    def oldest_person(self: Dataset) -> Record | None:
+        if self.records == []:
+            return None
+
+        oldest = self.records[0]
+        for record in self.records:
+            if record.age > oldest.age:
+                oldest = record
+        return oldest
+
+
+    def youngest_person(self: Dataset) -> Record | None:
+        if self.records == []:
+            return None
+
+        youngest = self.records[0]
+        for record in self.records:
+            if record.age < youngest.age:
+                youngest = record
+        return youngest
+
+
 # function to apply age specific rules
 def determine_age(str_age: str) -> int | str:
     try:
