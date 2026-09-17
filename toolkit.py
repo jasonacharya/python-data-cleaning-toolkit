@@ -104,6 +104,31 @@ class Dataset:
         return self.records
 
 
+    # def average_score(self) -> float:
+        #     score_data = self.records
+        #     hold_records = []
+    
+        #     for record in score_data:
+        #         hold_records.append(float(record.score))
+    
+        #     num_record = len(hold_records)
+        #     average = sum(hold_records)/num_record
+        #     return average
+    
+    def average_score(self: Dataset) -> float | None:
+        total_score = 0
+        count = 0
+        score_data = self.records
+
+        for record in score_data:
+            total_score += float(record.score)
+            count += 1
+        if count == 0:
+            return None
+
+        average = total_score/count
+        return average
+
 # function to apply age specific rules
 def determine_age(str_age: str) -> int | str:
     try:
