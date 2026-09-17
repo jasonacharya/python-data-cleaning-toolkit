@@ -1,0 +1,28 @@
+================= DATASET SUMMARY REPORT =================
+----------------------------------------------------------
+Rows loaded: 72
+Rows dropped: 30
+Final cleaned records: 42
+
+Reasons dropped (where each row was dropped):
+---------------------------------------------
+  blank_row: 2
+  invalid_required_data: 23
+  exact_duplicate: 0
+  conflicting_id: 5
+
+Key Statistics:
+----------------
+  Average score: 42.70238095238095
+  Oldest person: Record(id='41', name='Jyoti', age=40, city='Lalitpur', score='84.4')
+  Youngest person: Record(id='20', name='Elina', age=17, city='Kathmandu', score='73.0')
+
+People per city:
+----------------
+  Pokhara: 10
+  Chitwan: 6
+  Kathmandu: 9
+  Lalitpur: 13
+  Biratnagar: 4
+
+====================== END OF SUMMARY ======================
