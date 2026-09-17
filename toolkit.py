@@ -151,6 +151,16 @@ class Dataset:
                 youngest = record
         return youngest
 
+    
+    def people_per_city(self: Dataset) -> dict[str, int]:
+            count_city = {}
+            for record in self.records:
+                if record.city not in count_city:
+                    count_city[record.city] = 1
+                else:
+                    count_city[record.city] += 1
+            return count_city
+
 
 # function to apply age specific rules
 def determine_age(str_age: str) -> int | str:
