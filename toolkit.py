@@ -1,6 +1,8 @@
-import csv
+import csv, time
+from functools import wraps
 from dataclasses import dataclass
-from collections.abc import Iterator 
+from collections.abc import Iterator
+
 
 
 map_singles = {
@@ -47,12 +49,31 @@ class Record:
     score: str
 
     # check if a row has all values with an exception of name
-    def is_valid(self: Record) -> bool:
+    def is_valid(self):
         fields = [self.id, self.age, self.city, self.score]
         for field in fields:
             if field == "" or field is None:
                 return False
         return True
+
+
+# logtime decorator
+def log_time(func):
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start_time = time.perf_counter()
+
+        result = func(*args, **kwargs)
+
+        end_time = time.perf_counter()
+
+        elapsed_time = end_time - start_time
+
+        print(f"Elapsed time is: {elapsed_time} seconds")
+        return result
+    
+    return wrapper
 
 
 @dataclass
@@ -77,6 +98,7 @@ class Dataset:
                     continue
 
                 yield person
+
 
     # consumer function to handle duplicate ids
     def handle_id(self: Dataset) -> list[Record]:
@@ -105,16 +127,17 @@ class Dataset:
 
 
     # def average_score(self) -> float:
-        #     score_data = self.records
-        #     hold_records = []
-    
-        #     for record in score_data:
-        #         hold_records.append(float(record.score))
-    
-        #     num_record = len(hold_records)
-        #     average = sum(hold_records)/num_record
-        #     return average
-    
+    #     score_data = self.records
+    #     hold_records = []
+
+    #     for record in score_data:
+    #         hold_records.append(float(record.score))
+
+    #     num_record = len(hold_records)
+    #     average = sum(hold_records)/num_record
+    #     return average
+
+    @log_time
     def average_score(self: Dataset) -> float | None:
         total_score = 0
         count = 0
@@ -129,7 +152,7 @@ class Dataset:
         average = total_score/count
         return average
 
-
+    @log_time
     def oldest_person(self: Dataset) -> Record | None:
         if self.records == []:
             return None
@@ -140,7 +163,7 @@ class Dataset:
                 oldest = record
         return oldest
 
-
+    @log_time
     def youngest_person(self: Dataset) -> Record | None:
         if self.records == []:
             return None
@@ -150,16 +173,16 @@ class Dataset:
             if record.age < youngest.age:
                 youngest = record
         return youngest
-
     
+    @log_time
     def people_per_city(self: Dataset) -> dict[str, int]:
-            count_city = {}
-            for record in self.records:
-                if record.city not in count_city:
-                    count_city[record.city] = 1
-                else:
-                    count_city[record.city] += 1
-            return count_city
+        count_city = {}
+        for record in self.records:
+            if record.city not in count_city:
+                count_city[record.city] = 1
+            else:
+                count_city[record.city] += 1
+        return count_city
 
 
 # function to apply age specific rules
@@ -202,8 +225,21 @@ def main() -> None:
     dataset.handle_id()
     final_records = dataset.records
 
-    for record in final_records:
-        print(record)
+    average = dataset.average_score()
+    oldest = dataset.oldest_person()
+    youngest = dataset.youngest_person()
+    p_per_city = dataset.people_per_city()
+    print(f"Average Score: {average:.5f}")
+    print(f"Oldest age: {oldest}")
+    print(f"Youngest age: {youngest}")
+    print(f"People per city: {p_per_city}")
+    print(dataset.average_score.__name__)
+    print(dataset.oldest_person.__name__)
+    print(dataset.youngest_person.__name__)
+    print(dataset.people_per_city.__name__)
+
+    # for record in final_records:
+    #     print(record)
 
     print("Final Count: ", len(final_records))
 
